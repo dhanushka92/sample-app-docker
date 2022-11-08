@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment{
-         registry="275045685638.dkr.ecr.ap-south-1.amazonaws.com/test"
+         registry="275045685638.dkr.ecr.ap-south-1.amazonaws.com/test1"
          registryCredential='awsaccesskey'
          dockerImage=''
      }
@@ -15,12 +15,12 @@ pipeline {
         }
        stage('Docker Build'){
             steps{
-                 sh 'docker build -t test:latest .'
+                 sh 'docker build -t test1:latest .'
                  }
         }
         stage('Docker Tagging'){
             steps{
-                sh 'docker tag test:latest 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:${BUILD_NUMBER}'
+                sh 'docker tag test1:latest 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test1:${BUILD_NUMBER}'
                  }
         }
         
@@ -29,15 +29,16 @@ pipeline {
         steps{
             script{
                 docker.withRegistry("https://" + registry, "ecr:ap-south-1:" + registryCredential) {
-                     sh 'docker push 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:${BUILD_NUMBER}'
+                     sh 'docker push 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test1:${BUILD_NUMBER}'
                      }
             }
         }  
         }
         stage('deploy to eks'){
             steps{
-            withKubeConfig(caCertificate: '', clusterName: 'test-cluster', contextName: '', credentialsId: 'ekstoken', namespace: '', serverUrl: 'https://C7D00656B6894F679D76CF591A62D7B2.yl4.ap-south-1.eks.amazonaws.com') {
+            withKubeConfig(caCertificate: '', clusterName: 'new-cluster', contextName: '', credentialsId: 'ekstoken', namespace: '', serverUrl: 'https://DE8CE1B3B469E95B3DB7A78DC3FD5782.gr7.ap-south-1.eks.amazonaws.com') {
             sh 'kubectl apply -f deployment.yaml'
+            sh 'kubectl set image deployments/{deploymentNmae} {container name given in deploymentyaml file}={dockerId}/{projectName}:${BUILD_NUMBER}'
             }
             }
             }
