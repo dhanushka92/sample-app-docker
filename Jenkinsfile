@@ -7,9 +7,10 @@ pipeline {
      }
      
     stages {
-        stage('Fetching from bitbucket') {
+        stage('Initial Notification') {
             steps {
-                git changelog: false, poll: false, url: 'https://github.com/dhanushka92/sample-app-docker.git'
+                 //put webhook for your notification channel 
+                 echo 'Pipeline Start Notification'
             }
         }
        stage('Docker Build'){
