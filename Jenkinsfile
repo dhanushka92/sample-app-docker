@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Docker Tagging'){
             steps{
-                 sh 'docker tag test:latest 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:latest'
+                sh 'docker tag test:latest 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:${BUILD_NUMBER}'
                  }
         }
         
@@ -28,7 +28,7 @@ pipeline {
         steps{
             script{
                 docker.withRegistry("https://" + registry, "ecr:ap-south-1:" + registryCredential) {
-                     sh 'docker push 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:latest'
+                     sh 'docker push 275045685638.dkr.ecr.ap-south-1.amazonaws.com/test:${BUILD_NUMBER}'
                      }
             }
         }  
